@@ -16,27 +16,24 @@
 
 }
 
-
-
-.left-half{
-    width: 50vw;
-    height: 100vh;
-    border: 1px solid red;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #8ef6e4;
-}
-
-
-.right-half {
-    width: 50vw;
-    height: 100vh;
-    border: 1px solid red;
-    display: flex;
-    align-items: center;
+.word{
+    margin-left: 50%; 
+    height: 100px; 
+    font-size : 20pp;
+    padding-top:10em;
     justify-content: center;
 }
+
+.cells{
+    justify-content: center;
+    align-items: center;
+    display:flex;
+    width: 50%; 
+    height: 100%; 
+    float:left;
+    padding-top:10em;
+}
+
 
 
 body{
