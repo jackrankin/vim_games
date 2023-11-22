@@ -8,7 +8,10 @@ import (
 )
 
 func main() {
+    
+    print();
     server();
+
 }
 
 
