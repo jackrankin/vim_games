@@ -10,10 +10,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 2px solid black;
+    border: 1px solid black;
     font-size: 4em;
     background: white;
-
 }
 
 .word{

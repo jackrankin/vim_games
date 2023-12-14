@@ -1,3 +1,5 @@
+// for the millions of recruiters who are destined to look through MY github, this is my first
+// time using straaight HTML and js, so don't hate
 
 const arr = new Array();
 const a = new Set();
@@ -6,7 +8,6 @@ const words = new Array();
 
 var x=0,y=0;
 var typing=0;
-
 var word = "";
 var down=0;
 var right=0;
@@ -15,6 +16,8 @@ var up=0;
 var keyCounter=0;
 
 function getLetters(){
+    document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
+
     for (var i = 0; i < 16; i++) {
         var letter = String.fromCharCode('A'.charCodeAt() + Math.floor(Math.random() * 26));
 
@@ -30,16 +33,13 @@ function getLetters(){
 getLetters();
 
 function resetKeys(){
-
     up=0;
     down=0;
     left=0;
     right=0;
-
 }
 
 function checkWord(){
-    
     console.log(word);
     document.getElementById("currentWord").innerText = word;
 
@@ -50,18 +50,14 @@ function checkWord(){
     words.push(word);
     word="";
     visited.clear();
-    document.getElementById("wList").innerText = words.join(" ")
-
+    document.getElementById("wList").innerText = words.join("\n")
 }
-
-
 
 function makeMove(){
     let prev_x=x, prev_y=y;
 
-    if (up && y > 0) {
-        y--;
-    }
+    if (up && y > 0) y--;
+    
 
     if (down && y < 3){
         y++;
@@ -74,45 +70,47 @@ function makeMove(){
     if (left && x > 0) {
         x--;
     }
+
+    document.getElementById("cell-" + ((4 * prev_y) + prev_x).toString()).style.border = "1px solid black";
+    document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
+
     if (visited.has((4*y)+x)){
         x=prev_x;
         y=prev_y;
-    } else {
+    } else if (typing) {
         visited.add((4*y)+x);
         word += document.getElementById("hitbox-" + ((4 * y) + x).toString()).innerText;
         document.getElementById("currentWord").innerText = word;
         document.getElementById("cell-" + ((4 * y) + x).toString()).style.backgroundColor = "red";
     }
-
 }
 
 addEventListener("keydown", function(e) {
-    if (e.keyCode == 37) {
+    console.log(e.keyCode)
+    if (e.keyCode == 72) {
         left=1;
-    } else if(e.keyCode == 38){
+    } else if(e.keyCode == 75){
         up=1;
-    } else if(e.keyCode == 39){
+    } else if(e.keyCode == 76){
         right=1;
-    } else if(e.keyCode == 40){
+    } else if(e.keyCode == 74){
         down=1;
     } 
     a.add(e.keyCode); 
 });
 
-
 addEventListener("keyup", function(e) {
-    if (e.keyCode == 32 && !typing) {
+    if (e.keyCode == 86 && !typing) {
         typing = 1;
-    } else if (e.keyCode == 32 && typing) {
+        makeMove();
+    } else if (e.keyCode == 68 && typing) {
         typing = 0;
         resetKeys();
         checkWord();
-    }
-
-    if(a.size == 1 && typing && (e.keyCode == 32 || e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40)) {
+    } else if(a.size == 1) {
         makeMove();
         resetKeys();
-    }
+    } 
 
     a.delete(e.keyCode);
 });
