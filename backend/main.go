@@ -11,7 +11,6 @@ func main() {
     server();
 }
 
-
 func server(){
     r := chi.NewRouter()
 	r.Use(middleware.Logger)

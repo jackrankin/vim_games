@@ -3,7 +3,7 @@
 
 const arr = new Array();
 const a = new Set();
-const visited = new Set(); // TODO
+const visited = new Set(); 
 const words = new Array();
 
 var x=0,y=0;
@@ -57,36 +57,27 @@ function makeMove(){
     let prev_x=x, prev_y=y;
 
     if (up && y > 0) y--;
+    if (down && y < 3) y++;
+    if (right && x < 3) x++;
+    if (left && x > 0) x--;
     
-
-    if (down && y < 3){
-        y++;
-    }
-
-    if (right && x < 3){
-        x++;
-    }
-
-    if (left && x > 0) {
-        x--;
-    }
-
-    document.getElementById("cell-" + ((4 * prev_y) + prev_x).toString()).style.border = "1px solid black";
-    document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
-
     if (visited.has((4*y)+x)){
         x=prev_x;
         y=prev_y;
+        return; 
     } else if (typing) {
         visited.add((4*y)+x);
         word += document.getElementById("hitbox-" + ((4 * y) + x).toString()).innerText;
         document.getElementById("currentWord").innerText = word;
         document.getElementById("cell-" + ((4 * y) + x).toString()).style.backgroundColor = "red";
     }
+
+    document.getElementById("cell-" + ((4 * prev_y) + prev_x).toString()).style.border = "1px solid black";
+    document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
 }
 
 addEventListener("keydown", function(e) {
-    console.log(e.keyCode)
+
     if (e.keyCode == 72) {
         left=1;
     } else if(e.keyCode == 75){
@@ -96,6 +87,7 @@ addEventListener("keydown", function(e) {
     } else if(e.keyCode == 74){
         down=1;
     } 
+
     a.add(e.keyCode); 
 });
 
