@@ -15,11 +15,24 @@ var left=0;
 var up=0;
 var keyCounter=0;
 
-function getLetters(){
+async function getLetters(){
     document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
+    
+    const result = await fetch('http://localhost:8000/generateRandom')
+        .then(response => {
+            return response.text(); // Returns a promise
+        })
+        .then(data => {
+            return data
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+
+    console.log(result)
 
     for (var i = 0; i < 16; i++) {
-        var letter = String.fromCharCode('A'.charCodeAt() + Math.floor(Math.random() * 26));
+        var letter = result[i];
 
         if (i%4 == 0){
             arr.push(new Array());

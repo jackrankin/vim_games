@@ -2,10 +2,14 @@ package main
 
 import (
 	"net/http"
+    "fmt"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+    "github.com/rs/cors"
 )
+
+var root = makeTrie();
 
 func main() {
     server();
@@ -14,18 +18,24 @@ func main() {
 func server(){
     r := chi.NewRouter()
 	r.Use(middleware.Logger)
+    c := cors.Default()
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello world"))
+
+	r.Get("/generateRandom", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(generateBoard()))
 	})
 
-	r.Get("/a", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("a"))
+	r.Get("/validateWord/{word}", func(w http.ResponseWriter, r *http.Request) {
+        word := chi.URLParam(r, "word")
+        fmt.Println(word)
+        if validateWord(root, word) {
+            w.Write([]byte("true"))
+        } else {
+            w.Write([]byte("false"))
+        }
 	})
-	
-	r.Get("/b", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("b"))
-	})
+    
+    handler := c.Handler(r)
 
-    http.ListenAndServe(":3000", r)
+    http.ListenAndServe(":8000", handler)
 }
