@@ -6,32 +6,31 @@ import (
     "fmt"
     "bufio"
     "os"
+    "time"
+    //"runtime"
+    //"sync"
 )
 
 type trieNode struct {
-    letter byte
     children []trieNode
     end bool 
 }
 
 func trieAppend(root *trieNode, word string) {
     for idx := 0; idx < len(word); idx++ {
-        root.children[word[idx] - 'A'].letter = word[idx]
         root = &root.children[word[idx] - 'A']
-        if len(root.children) == 0 {
+        if root.children == nil {
             root.children = make([]trieNode, 26)
         }
-
     }
     root.end = true
 }
 
 func validateWord(root *trieNode, word string) bool {
     for idx := 0; idx < len(word); idx++ {
-        if len(root.children) == 0 || root.letter == 0 {
+        if root.children == nil {
             return false;
         }
-        root.children[word[idx] - 'A'].letter = word[idx]
         root = &root.children[word[idx] - 'A']
     }
     return root.end
@@ -40,7 +39,6 @@ func validateWord(root *trieNode, word string) bool {
 func makeTrie() *trieNode {
 
     root := trieNode{
-        letter:   '1',
         children: make([]trieNode, 26),
         end:      false,
     }
@@ -54,12 +52,14 @@ func makeTrie() *trieNode {
     defer file.Close()
     
     scanner := bufio.NewScanner(file)
+    startTime := time.Now() 
 
 	for scanner.Scan() {
-		line := scanner.Text() 
+        line := scanner.Text() 
         trieAppend(&root, string(line))
 	}
-    fmt.Println("Successful Parsing")
+   
+    fmt.Println("Successful Parsing:", time.Now().Sub(startTime))
     return &root
 
 }
