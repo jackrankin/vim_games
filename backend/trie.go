@@ -7,8 +7,6 @@ import (
     "bufio"
     "os"
     "time"
-    //"runtime"
-    //"sync"
 )
 
 type trieNode struct {
@@ -42,7 +40,7 @@ func makeTrie() *trieNode {
         children: make([]trieNode, 26),
         end:      false,
     }
-
+    
     file, err := os.Open("./words.txt")
 
     if err != nil {
@@ -51,15 +49,14 @@ func makeTrie() *trieNode {
 
     defer file.Close()
     
-    scanner := bufio.NewScanner(file)
     startTime := time.Now() 
 
-	for scanner.Scan() {
-        line := scanner.Text() 
-        trieAppend(&root, string(line))
-	}
-   
-    fmt.Println("Successful Parsing:", time.Now().Sub(startTime))
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        trieAppend(&root, scanner.Text())
+    }
+
+    fmt.Println("Successful parsing in", time.Now().Sub(startTime))
     return &root
 
 }
