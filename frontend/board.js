@@ -4,15 +4,15 @@ const visited = new Set();
 const words = new Array();
 const wordSet = new Set();
 
-var x=0,y=0;
-var typing=0;
-var word = "";
-var down=0;
-var right=0;
-var left=0;
-var up=0;
-var keyCounter=0;
-var score=0;
+let x=0,y=0;
+let typing=0;
+let word = "";
+let down=0;
+let right=0;
+let left=0;
+let up=0;
+let keyCounter=0;
+let score=0;
 
 async function getLetters(){
     document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
@@ -30,8 +30,8 @@ async function getLetters(){
 
     console.log(result)
 
-    for (var i = 0; i < 16; i++) {
-        var letter = result[i];
+    for (let i = 0; i < 16; i++) {
+        let letter = result[i];
         if (i%4 == 0) arr.push(new Array());
         arr.slice(-1)[0].push(letter);
         document.getElementById("hitbox-"+i.toString()).innerText = letter;
