@@ -1,5 +1,3 @@
-// this is the most overcomplicated thing ever but its just a homegrown, grass fed, free range, DIY trie
-
 package main
 
 import (
@@ -8,6 +6,8 @@ import (
     "os"
     "time"
 )
+
+var head trieNode;
 
 type trieNode struct {
     children []trieNode
@@ -34,9 +34,9 @@ func validateWord(root *trieNode, word string) bool {
     return root.end
 }
 
-func makeTrie() *trieNode {
-
-    root := trieNode{
+func makeTrie() {
+    
+    head = trieNode{
         children: make([]trieNode, 26),
         end:      false,
     }
@@ -52,11 +52,11 @@ func makeTrie() *trieNode {
     startTime := time.Now() 
 
     scanner := bufio.NewScanner(file)
+
     for scanner.Scan() {
-        trieAppend(&root, scanner.Text())
+        trieAppend(&head, scanner.Text())
     }
 
     fmt.Println("Successful parsing in", time.Now().Sub(startTime))
-    return &root
 
 }

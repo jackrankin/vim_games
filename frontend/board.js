@@ -14,10 +14,43 @@ let up=0;
 let keyCounter=0;
 let score=0;
 
+const socket = new WebSocket("ws://localhost:8000/websocket");
+
+socket.onopen = (event) => {
+    console.log("WebSocket connection opened:", event);
+};
+
+socket.onmessage = (event) => {
+    console.log("Message received:", event.data);
+};
+
+socket.onclose = (event) => {
+    console.log("WebSocket connection closed:", event);
+};
+
+function waitForSocketConnection(socket, callback){
+    setTimeout(
+        function () {
+            if (socket.readyState === 1) {
+                if (callback != null){
+                    callback();
+                }
+            } else {
+                waitForSocketConnection(socket, callback);
+            }
+        }, 5);
+}
+
+function send(msg){
+    waitForSocketConnection(socket, function(){
+        socket.send(msg);
+    });
+}
+
 async function getLetters(){
     document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
     
-    const result = await fetch('http://localhost:8000/generateRandom')
+    const result = await fetch("http://localhost:8000/generateRandom")
         .then(response => {
             return response.text(); // Returns a promise
         })
