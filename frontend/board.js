@@ -47,6 +47,8 @@ function send(msg){
     });
 }
 
+send("user test from frontend")
+
 async function getLetters(){
     document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
     

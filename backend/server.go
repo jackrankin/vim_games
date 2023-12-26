@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "net/http"
+    "strconv"
 
     "github.com/go-chi/chi/v5"
     "github.com/go-chi/chi/v5/middleware"
@@ -28,13 +29,11 @@ func runServer(){
 
     r := chi.NewRouter()
     m := melody.New()
-    users := make(map[string]int)
     id := 0
 
 	m.HandleConnect(func(s *melody.Session) {
 		fmt.Println("Client connected")
         s.Set("id", id)
-        users[id] = s
         id++
 	})
 
@@ -45,7 +44,12 @@ func runServer(){
 	m.HandleMessage(func(s *melody.Session, msg []byte) {
 		fmt.Printf("Message from client: %s\n", msg)
 		m.Broadcast(msg)
-        m.Broadcast()
+        userId, ok := s.Get("id")
+        if ok {
+            ba := []byte("USER ID" + strconv.Itoa(userId.(int)))
+            m.Broadcast(ba)
+            fmt.Println(userId)
+        }
 	})
 
     c := cors.Default()
