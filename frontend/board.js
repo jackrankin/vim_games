@@ -14,66 +14,25 @@ let up=0;
 let keyCounter=0;
 let score=0;
 
-const socket = new WebSocket("ws://localhost:8000/websocket");
+var urlParams = new URLSearchParams(window.location.search);
+var name = urlParams.get('name');
+var gameString = urlParams.get('gameString');
+var gameId = urlParams.get('gameId');
 
-socket.onopen = (event) => {
-    console.log("WebSocket connection opened:", event);
-};
+console.log(name, gameString, gameId);
 
-socket.onmessage = (event) => {
-    console.log("Message received:", event.data);
-};
+setLetters()
 
-socket.onclose = (event) => {
-    console.log("WebSocket connection closed:", event);
-};
-
-function waitForSocketConnection(socket, callback){
-    setTimeout(
-        function () {
-            if (socket.readyState === 1) {
-                if (callback != null){
-                    callback();
-                }
-            } else {
-                waitForSocketConnection(socket, callback);
-            }
-        }, 5);
-}
-
-function send(msg){
-    waitForSocketConnection(socket, function(){
-        socket.send(msg);
-    });
-}
-
-send("user test from frontend")
-
-async function getLetters(){
+async function setLetters(){
     document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
-    
-    const result = await fetch("http://localhost:8000/generateRandom")
-        .then(response => {
-            return response.text(); // Returns a promise
-        })
-        .then(data => {
-            return data
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
-
-    console.log(result)
 
     for (let i = 0; i < 16; i++) {
-        let letter = result[i];
+        let g = gameString[i];
         if (i%4 == 0) arr.push(new Array());
-        arr.slice(-1)[0].push(letter);
-        document.getElementById("hitbox-"+i.toString()).innerText = letter;
+        arr.slice(-1)[0].push(g);
+        document.getElementById("hitbox-"+i.toString()).innerText = g;
     }
 }
-
-getLetters();
 
 function resetKeys(){
     up=0;

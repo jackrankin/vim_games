@@ -1,71 +1,30 @@
 <!DOCTYPE html>
 <html>
-
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="index.css">
-        <title>VIM wordhunt</title>
+        <title>VIM GAMES</title>
     </head>
 
+
     <body>
+
+        <script src="./controller.js" ></script>
+        <nav>
+            <a href="./boggle.html">VIM Boggle</a>
+        </nav>
+
+        <input type="text" placeholder="game id" id="gameField"/>
+        <input type="text" placeholder="username" id="nameField"/>
+
         <div>
-            <div class="cells"> 
-                <article class = "game-grid">
-                    <div class = "game-cell" id = "cell-0">
-                        <p class = "hitbox" id = "hitbox-0" ></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-1">
-                        <p class = "hitbox" id = "hitbox-1"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-2">
-                        <p class = "hitbox" id = "hitbox-2"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-3">
-                        <p class = "hitbox" id = "hitbox-3"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-4">
-                        <p class = "hitbox" id = "hitbox-4"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-5">
-                        <p class = "hitbox" id = "hitbox-5"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-6">
-                        <p class = "hitbox" id = "hitbox-6"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-7">
-                        <p class = "hitbox" id = "hitbox-7"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-8">
-                        <p class = "hitbox" id = "hitbox-8"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-9">
-                        <p class = "hitbox" id = "hitbox-9"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-10">
-                        <p class = "hitbox" id = "hitbox-10"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-11">
-                        <p class = "hitbox" id = "hitbox-11"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-12">
-                        <p class = "hitbox" id = "hitbox-12"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-13">
-                        <p class = "hitbox" id = "hitbox-13"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-14">
-                        <p class = "hitbox" id = "hitbox-14"></p>
-                    </div>
-                    <div class = "game-cell" id = "cell-15">
-                        <p class = "hitbox" id = "hitbox-15"></p>
-                    </div>
-                </article>
-            </div>
-            <div class="scoreDisplay">YOUR SCORE</div>
-            <div class="score" id="your_score">0</div>
-            <div class="wordList" id="wList"></div>
-            <script src="./board.js"></script>
+            <button onclick="enterGame()"> ENTER ROOM </button>
+        </div>
+
+        <div>
+            <button onclick="makeGame()"> GENERATE ROOM </button>
         </div>
     </body>
+
 </html>

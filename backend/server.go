@@ -3,13 +3,19 @@ package main
 import (
     "fmt"
     "net/http"
-    "strconv"
+    "encoding/json"
+    "log"
 
     "github.com/go-chi/chi/v5"
     "github.com/go-chi/chi/v5/middleware"
     "github.com/rs/cors"
-	"github.com/olahol/melody"
 )
+
+
+type Game struct {
+    GameId string `json: "gameId"`
+    GameString string  `json: "gameString"`
+}
 
 func serveGenerateBoard (w http.ResponseWriter, r *http.Request) {
     w.Write([]byte(generateBoard()))
@@ -25,41 +31,48 @@ func serveValidateWord(w http.ResponseWriter, r *http.Request) {
     }
 }
 
+func makeRoom(w http.ResponseWriter, r *http.Request) {
+    gameString := generateBoard()
+    gameId := createGame(gameString)
+
+    g := Game{
+        GameId: gameId,
+        GameString: gameString,
+    }
+
+    jsonData, err := json.Marshal(g)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println(string(jsonData))
+    
+    w.Header().Set("Content-Type", "application/json")
+    w.Write(jsonData)
+}
+
+func joinRoom(w http.ResponseWriter, r *http.Request) {
+    name := chi.URLParam(r, "name")
+    gameId := chi.URLParam(r, "gameId")
+
+    gameString := joinGame(gameId)
+    initUser(name, gameId)
+
+    w.Write([]byte(gameString))
+}
+
+
+
 func runServer(){
 
     r := chi.NewRouter()
-    m := melody.New()
-    id := 0
-
-	m.HandleConnect(func(s *melody.Session) {
-		fmt.Println("Client connected")
-        s.Set("id", id)
-        id++
-	})
-
-	m.HandleDisconnect(func(s *melody.Session) {
-		fmt.Println("Client disconnected")
-	})
-
-	m.HandleMessage(func(s *melody.Session, msg []byte) {
-		fmt.Printf("Message from client: %s\n", msg)
-		m.Broadcast(msg)
-        userId, ok := s.Get("id")
-        if ok {
-            ba := []byte("USER ID" + strconv.Itoa(userId.(int)))
-            m.Broadcast(ba)
-            fmt.Println(userId)
-        }
-	})
-
     c := cors.Default()
 
 	r.Use(middleware.Logger)
 	r.Get("/generateRandom", serveGenerateBoard)
 	r.Get("/validateWord/{word}", serveValidateWord)
-    r.Get("/websocket", func (w http.ResponseWriter, r *http.Request){
-        m.HandleRequest(w, r)
-    })
+	r.Get("/makeRoom", makeRoom)
+	r.Get("/joinRoom/{name}/{gameId}", joinRoom)
 
     handler := c.Handler(r)
 
