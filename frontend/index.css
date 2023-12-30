@@ -6,13 +6,23 @@
     grid-gap: 3px;
 }
 
+.cells{
+    justify-content: center;
+    align-items: center;
+    display:flex;
+    width: 50%; 
+    height: 100%; 
+    float:left;
+    padding-top:90px;
+}
+
 .game-cell {
     display: flex;
     justify-content: center;
     align-items: center;
     border: 1px solid black;
     font-size: 4em;
-    background: white;
+    background-color: #f0f0ff; 
 }
 
 .word{
@@ -25,9 +35,11 @@
 
 .wordList{
     margin-left: 50%; 
-    height: 140px; 
+    margin-top: 6em;
     font-size : 20pp;
-    padding-top:10em;
+    width: 150px;
+    height: 25em;
+    background-color: #f0f0f0;
     justify-content: center;
 }
 
@@ -38,25 +50,22 @@
     justify-content: center;
 }
 
-.scoreDisplay {
-    margin-left: 50%; 
-    height: 100px; 
-    font-size : 30px;
-    padding-top:5em;
-    justify-content: center;
+
+.center_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0; 
+    padding: 10px; 
 }
 
-.cells{
-    justify-content: center;
-    align-items: center;
-    display:flex;
-    width: 50%; 
-    height: 100%; 
-    float:left;
-    padding-top:10em;
+.timer, .scoreDisplay {
+    padding: 10px;
+    border: 1px solid #ccc; 
 }
 
 body{
     padding: 0;
     margin: 0;
+    font: Monaco;
 }

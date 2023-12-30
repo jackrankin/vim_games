@@ -9,8 +9,14 @@
     <body>
         <div>
             <script src="./controller.js"></script>
+
+            <div class="center_container">
+                <div class="timer" id="your_time">TIME: 60</div>
+                <div class="scoreDisplay" id="your_score">SCORE: 0</div>
+            </div>
+
             <div class="cells"> 
-                <article class = "game-grid">
+                                <article class = "game-grid">
                     <div class = "game-cell" id = "cell-0">
                         <p class = "hitbox" id = "hitbox-0" ></p>
                     </div>
@@ -61,9 +67,7 @@
                     </div>
                 </article>
             </div>
-            <div class="scoreDisplay">YOUR SCORE</div>
-            <div class="score" id="your_score">0</div>
-            <div class="wordList" id="wList"></div>
+            <div class="wordList" id="wList">--------WORDS--------<br></br></div>
             <script src="./board.js" type="module"></script>
         </div>
     </body>

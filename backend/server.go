@@ -62,6 +62,23 @@ func joinRoom(w http.ResponseWriter, r *http.Request) {
 }
 
 
+func finishGame(w http.ResponseWriter, r *http.Request){ 
+    name := chi.URLParam(r, "name")
+    gameId := chi.URLParam(r, "gameId")
+    score :=  (chi.URLParam(r, "score"))
+
+    addGame(name, gameId, score)
+
+    leaderboard := getLeaderboard(gameId)
+
+    jsonLB, err := json.Marshal(leaderboard)
+    check(err)
+
+    w.Header().Set("Content-Type", "application/json")
+    w.Write(jsonLB)
+}
+
+
 
 func runServer(){
 
@@ -73,6 +90,7 @@ func runServer(){
 	r.Get("/validateWord/{word}", serveValidateWord)
 	r.Get("/makeRoom", makeRoom)
 	r.Get("/joinRoom/{name}/{gameId}", joinRoom)
+    r.Get("/finish/{name}/{gameId}/{score}", finishGame)
 
     handler := c.Handler(r)
 

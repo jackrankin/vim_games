@@ -49,7 +49,6 @@ async function makeGame() {
     updatePage();
 }
 
-
 function updatePage() {
     var url = "./boggle.html?name=" + encodeURIComponent(name) +
     "&gameString=" + encodeURIComponent(gameString) +

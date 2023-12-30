@@ -9,6 +9,11 @@ import (
     "github.com/joho/godotenv"
 )
 
+type User struct {
+    Username string `json: "username"`
+    Score string `json: "score"`
+}
+
 var db *sql.DB
 
 func check(err error) {
@@ -17,9 +22,22 @@ func check(err error) {
     }
 }
 
+func initDB() {
+    _, err := db.Exec("DROP TABLE IF EXISTS users; DROP TABLE IF EXISTS games; DROP SEQUENCE IF EXISTS sequence_thousand CASCADE;")
+    check(err)
+    _, err = db.Exec("CREATE TABLE games (game_id SERIAL PRIMARY KEY, game_string VARCHAR(16) NOT NULL);")
+    check(err)
+    _, err = db.Exec("CREATE TABLE users (user_id SERIAL PRIMARY KEY,game_id INT REFERENCES games(game_id) ON DELETE CASCADE,username VARCHAR(255) NOT NULL,score INT);")
+    check(err)
+    _, err = db.Exec("CREATE SEQUENCE sequence_thousand START WITH 2000;")
+    check(err)
+    _, err = db.Exec("ALTER TABLE games ALTER COLUMN game_id SET DEFAULT nextval('sequence_thousand');")
+    check(err)
+}
+
 func initUser(name string, gameId string) {
     fmt.Println("INSERTING NAME:", name)
-    _, err := db.Exec("INSERT INTO users (game_id, username, finish_time) VALUES ($1, $2, $3)", gameId, name, 1e9)
+    _, err := db.Exec("INSERT INTO users (game_id, username, score) VALUES ($1, $2, $3)", gameId, name, 1e9)
     check(err)
 }
 
@@ -51,9 +69,27 @@ func joinGame(gameId string) string {
     return gameString
 }
 
-func finishGame(name string, time float32) {
-    _, err := db.Exec("UPDATE users SET finish_time = $1 WHERE username = $2", time, name)
+func addGame(name string, gameId string, time string) {
+    _, err := db.Exec("UPDATE users SET score = $1 WHERE username = $2 AND game_id = $3", time, name, gameId)
     check(err)
+}
+
+func getLeaderboard(gameId string) []User {
+    rows, err := db.Query("SELECT users.username, users.score FROM users JOIN games ON users.game_id = games.game_id WHERE games.game_id = $1 ORDER BY users.score DESC", gameId)
+    check(err)
+    var username string
+    var score string 
+    leaderboard := make([]User, 0)
+    for rows.Next() {
+        err := rows.Scan(&username, &score)
+        check(err)
+        u := User{
+            Username: username,
+            Score: score,
+        }
+        leaderboard = append(leaderboard, u)
+    }
+    return leaderboard;
 }
 
 func connectDatabase() {
@@ -61,9 +97,11 @@ func connectDatabase() {
     err = godotenv.Load("../.env")
     check(err)
 
-    connStr := os.Getenv("DB_CONNECTION_STRING")
+    connStr := os.Getenv("DB_CONNECTION_STRING") 
 
-    db, err = sql.Open("postgres", connStr)
+    db, err = sql.Open("postgres", connStr) // I'm pretty sure this will work with any sql database if u swap the postgres string
     check(err)
+
+    initDB()
 
 }

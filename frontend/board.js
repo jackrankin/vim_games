@@ -13,13 +13,12 @@ let left=0;
 let up=0;
 let keyCounter=0;
 let score=0;
+let gameOver = 0;
 
 var urlParams = new URLSearchParams(window.location.search);
 var name = urlParams.get('name');
 var gameString = urlParams.get('gameString');
 var gameId = urlParams.get('gameId');
-
-console.log(name, gameString, gameId);
 
 setLetters()
 
@@ -34,6 +33,56 @@ async function setLetters(){
     }
 }
 
+let endTime = new Date();
+endTime.setSeconds(endTime.getSeconds() + 20);
+
+function checkTime() {
+    let currentTime = new Date();
+
+    let remainingTime = Math.floor((endTime - currentTime) / 1000);
+    document.getElementById("your_time").innerText = "TIME: " + remainingTime;
+
+
+    if (remainingTime <= 0) {
+        endGame();
+    } else {
+        requestAnimationFrame(checkTime);
+    }
+}
+
+async function endGame() {
+    console.log("GAME CONCLUDED")
+
+    const result = await fetch("http://localhost:8000/finish/" + name + '/' + gameId + '/' + score)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            return data
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+
+    gameOver = 1;
+    updateScoreBoard(result)
+}
+
+function updateScoreBoard(result){
+    let res = "--LEADERBOARD--\n"
+    
+    for (let i = 0; i < result.length; i++) {
+        res += result[i]['Username'] + " - " + result[i]['Score'] + "\n"
+    }
+
+    document.getElementById("wList").innerText = res
+
+    for (let i = 0; i < 16; i++)
+        document.getElementById("cell-" + (i).toString()).style.backgroundColor = "white";
+
+}
+checkTime();
+
 function resetKeys(){
     up=0;
     down=0;
@@ -42,7 +91,6 @@ function resetKeys(){
 }
 
 async function checkWord(){
-    console.log(word);
 
     for (let i = 0; i < 16; i++)
         document.getElementById("cell-" + (i).toString()).style.backgroundColor = "white";
@@ -61,19 +109,22 @@ async function checkWord(){
     console.log("is", word, "?", valid)
 
     if (valid && !wordSet.has(word) && word.length > 2) {
-        words.push(word);
+        words.push(word + " >> " + (200*word.length).toString());
         wordSet.add(word);
         score += 200 * word.length;
         console.log(score);
-        document.getElementById("your_score").innerText = score.toString();
+        document.getElementById("your_score").innerText = "SCORE: " + score.toString()
     }
     
     word="";
     visited.clear();
-    document.getElementById("wList").innerText = words.join("\n");
+    document.getElementById("wList").innerText = "--------WORDS--------\n" + words.join("\n");
 }
 
 function makeMove(){
+    if (gameOver == 1) {
+        return 
+    }
     let prev_x=x, prev_y=y;
 
     if (up && y > 0) y--;
@@ -96,7 +147,9 @@ function makeMove(){
 }
 
 addEventListener("keydown", function(e) {
-
+    if (gameOver == 1) {
+        return 
+    }
     if (e.keyCode == 72) {
         left=1;
     } else if(e.keyCode == 75){
@@ -111,6 +164,9 @@ addEventListener("keydown", function(e) {
 });
 
 addEventListener("keyup", function(e) {
+    if (gameOver == 1) {
+        return 
+    }
     if (e.keyCode == 86 && !typing) {
         typing = 1;
         makeMove();
