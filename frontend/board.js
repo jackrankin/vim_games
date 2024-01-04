@@ -24,6 +24,27 @@ var name = urlParams.get('name');
 var gameString = urlParams.get('gameString');
 var gameId = urlParams.get('gameId');
 
+async function checkFinish() {
+    const result = await fetch("http://localhost:8000/checkFinish/" + name + '/' + gameId)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            return data
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+    
+    if (result) {
+        gameOver = 1;
+        updateScoreBoard(result)
+    }
+
+    console.log(result)
+}
+
+checkFinish();
 setLetters()
 
 async function setLetters(){
@@ -38,14 +59,13 @@ async function setLetters(){
 }
 
 let endTime = new Date();
-endTime.setSeconds(endTime.getSeconds() + 10000000);
+endTime.setSeconds(endTime.getSeconds() + 20);
 
 function checkTime() {
     let currentTime = new Date();
 
     let remainingTime = Math.floor((endTime - currentTime) / 1000);
     document.getElementById("your_time").innerText = "TIME: " + remainingTime;
-
 
     if (remainingTime <= 0) {
         endGame();
@@ -55,8 +75,6 @@ function checkTime() {
 }
 
 async function endGame() {
-    console.log("GAME CONCLUDED")
-
     const result = await fetch("http://localhost:8000/finish/" + name + '/' + gameId + '/' + score)
         .then(response => {
             return response.json();
@@ -89,6 +107,9 @@ function updateScoreBoard(result){
 checkTime();
 
 async function checkWord(){
+    if (word.length == 0) {
+        return;
+    }
 
     for (let i = 0; i < 16; i++)
         document.getElementById("cell-" + (i).toString()).style.backgroundColor = "white";

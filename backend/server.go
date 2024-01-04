@@ -78,6 +78,18 @@ func finishGame(w http.ResponseWriter, r *http.Request){
     w.Write(jsonLB)
 }
 
+func checkFinish(w http.ResponseWriter, r *http.Request){
+    name := chi.URLParam(r, "name")
+    gameId := chi.URLParam(r, "gameId")
+    
+    finish := checkUserFinish(name, gameId)
+    if (finish == 1) {
+        w.Write([]byte("true"))
+    } else {
+        w.Write([]byte("false"))
+    }
+}
+
 
 
 func runServer(){
@@ -91,6 +103,7 @@ func runServer(){
 	r.Get("/makeRoom", makeRoom)
 	r.Get("/joinRoom/{name}/{gameId}", joinRoom)
     r.Get("/finish/{name}/{gameId}/{score}", finishGame)
+    r.Get("/checkFinish/{name}/{gameId}", checkFinish)
 
     handler := c.Handler(r)
 
