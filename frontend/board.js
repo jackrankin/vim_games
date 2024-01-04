@@ -1,11 +1,14 @@
 const arr = new Array();
-const a = new Set();
+const keys = new Set();
 const visited = new Set(); 
 const words = new Array();
 const wordSet = new Set();
+const keyMap = {72 : 'h', 74 : 'j', 75 : 'k', 76 : 'l'}
 
-let x=0,y=0;
+let x=0, y=0;
+let X=0, Y=0; 
 let typing=0;
+let motion=0;
 let word = "";
 let down=0;
 let right=0;
@@ -13,7 +16,8 @@ let left=0;
 let up=0;
 let keyCounter=0;
 let score=0;
-let gameOver = 0;
+let gameOver=0;
+
 
 var urlParams = new URLSearchParams(window.location.search);
 var name = urlParams.get('name');
@@ -34,7 +38,7 @@ async function setLetters(){
 }
 
 let endTime = new Date();
-endTime.setSeconds(endTime.getSeconds() + 20);
+endTime.setSeconds(endTime.getSeconds() + 10000000);
 
 function checkTime() {
     let currentTime = new Date();
@@ -81,14 +85,8 @@ function updateScoreBoard(result){
         document.getElementById("cell-" + (i).toString()).style.backgroundColor = "white";
 
 }
-checkTime();
 
-function resetKeys(){
-    up=0;
-    down=0;
-    left=0;
-    right=0;
-}
+checkTime();
 
 async function checkWord(){
 
@@ -106,8 +104,6 @@ async function checkWord(){
             console.error('Fetch error:', error);
         });
 
-    console.log("is", word, "?", valid)
-
     if (valid && !wordSet.has(word) && word.length > 2) {
         words.push(word + " >> " + (200*word.length).toString());
         wordSet.add(word);
@@ -115,70 +111,113 @@ async function checkWord(){
         console.log(score);
         document.getElementById("your_score").innerText = "SCORE: " + score.toString()
     }
-    
+
     word="";
     visited.clear();
     document.getElementById("wList").innerText = "--------WORDS--------\n" + words.join("\n");
 }
 
-function makeMove(){
-    if (gameOver == 1) {
-        return 
-    }
-    let prev_x=x, prev_y=y;
+function makeHighlightMove(l, r, d, u){
+    let dy = r - l;
+    let dx = d - u;
 
-    if (up && y > 0) y--;
-    if (down && y < 3) y++;
-    if (right && x < 3) x++;
-    if (left && x > 0) x--;
+    document.getElementById("cell-" + (4*x + y).toString()).style.border = "1px solid black"
+    document.getElementById("cell-" + (4*X + Y).toString()).style.border = "2px solid blue"
+
+    if (x + dx != -1 && x + dx != 4 && y + dy != -1 && y + dy != 4) {
+        x = x + dx;
+        y = y + dy;
+    }
+
+    console.log("HOME SQUARE", X, Y)
+    console.log("DEST SQUARE", x, y)
+
+    document.getElementById("cell-" + (4*x + y).toString()).style.border = "2px solid red"
+}
+
+function makeNullMove(l, r, d, u){
+    let dy = r - l;
+    let dx = d - u;
+
+    document.getElementById("cell-" + (4*x + y).toString()).style.border = "1px solid black"
     
-    if (visited.has((4*y)+x)){
-        x=prev_x;
-        y=prev_y;
-        return; 
-    } else if (typing) {
-        visited.add((4*y)+x);
-        word += document.getElementById("hitbox-" + ((4 * y) + x).toString()).innerText;
-        document.getElementById("cell-" + ((4 * y) + x).toString()).style.backgroundColor = "red";
+    if (x + dx != -1 && x + dx != 4 && y + dy != -1 && y + dy != 4) {
+        x += dx;
+        y += dy;
+        X=x,Y=y;
     }
 
-    document.getElementById("cell-" + ((4 * prev_y) + prev_x).toString()).style.border = "1px solid black";
-    document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
+    document.getElementById("cell-" + (4*x + y).toString()).style.border = "2px solid blue"
+}
+
+function addLetter() {
+    if (visited.has(4*X + Y)) return;
+    visited.add(4*X + Y)
+    word += document.getElementById("cell-" + (4*X + Y).toString()).innerText;
 }
 
 addEventListener("keydown", function(e) {
     if (gameOver == 1) {
         return 
     }
-    if (e.keyCode == 72) {
-        left=1;
-    } else if(e.keyCode == 75){
-        up=1;
-    } else if(e.keyCode == 76){
-        right=1;
-    } else if(e.keyCode == 74){
-        down=1;
-    } 
+    console.log(keys)
+    if (keys.has(e.keyCode)) return;
+    if (typing) {keys.add(e.keyCode)}
 
-    a.add(e.keyCode);
+    let l=0,r=0,d=0,u=0
+
+    if (e.keyCode == 72) {
+        if (motion) keys.add(e.keyCode);
+        left=l=1;
+    } else if (e.keyCode == 75){
+        if (motion) keys.add(e.keyCode);
+        up=u=1;
+    } else if (e.keyCode == 76){
+        if (motion) keys.add(e.keyCode);
+        right=r=1;
+    } else if(e.keyCode == 74){
+        if (motion) keys.add(e.keyCode);
+        down=d=1;
+    } else if (e.keyCode == 86) {
+        addLetter();
+        typing = 1;
+    } else if (e.keyCode == 68) {
+        typing = 0;
+        checkWord();
+        keys.clear();
+        visited.clear();
+    }
+
+    if (typing) {
+        makeHighlightMove(l,r,d,u);
+    } else if (!typing) {
+        makeNullMove(l,r,d,u);
+    }
+
+    console.log(up, down, left, right, X, Y, x, y)
 });
 
-addEventListener("keyup", function(e) {
-    if (gameOver == 1) {
-        return 
-    }
-    if (e.keyCode == 86 && !typing) {
-        typing = 1;
-        makeMove();
-    } else if (e.keyCode == 68 && typing) {
-        typing = 0;
-        resetKeys();
-        checkWord();
-    } else if(a.size == 1) {
-        makeMove();
-        resetKeys();
-    } 
 
-    a.delete(e.keyCode);
+addEventListener("keyup", function(e) {
+    if (gameOver)
+        return;
+    
+    if (keys.has(e.keyCode)) {
+        keys.delete(e.keyCode)
+        if (!keys.size){
+            if (!visited.has(4*x + y)){
+                document.getElementById("cell-" + (4*X + Y).toString()).style.border = "1px solid black"
+                X=x,Y=y;
+                document.getElementById("cell-" + (4*X + Y).toString()).style.border = "2px solid blue"
+                addLetter();
+            } else {
+                document.getElementById("cell-" + (4*x + y).toString()).style.border = "1px solid black"
+                x=X,y=Y;
+                document.getElementById("cell-" + (4*X + Y).toString()).style.border = "2px solid blue"
+            }
+            keys.clear();
+        }
+        console.log(word)
+    }
 });
 
