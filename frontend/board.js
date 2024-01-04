@@ -201,23 +201,30 @@ addEventListener("keydown", function(e) {
 addEventListener("keyup", function(e) {
     if (gameOver)
         return;
-    
-    if (keys.has(e.keyCode)) {
-        keys.delete(e.keyCode)
-        if (!keys.size){
-            if (!visited.has(4*x + y)){
-                document.getElementById("cell-" + (4*X + Y).toString()).style.border = "1px solid black"
-                X=x,Y=y;
-                document.getElementById("cell-" + (4*X + Y).toString()).style.border = "2px solid blue"
-                addLetter();
-            } else {
-                document.getElementById("cell-" + (4*x + y).toString()).style.border = "1px solid black"
-                x=X,y=Y;
-                document.getElementById("cell-" + (4*X + Y).toString()).style.border = "2px solid blue"
-            }
-            keys.clear();
+
+    if (e.keyCode == 72) {
+        left=0;
+    } else if (e.keyCode == 75){
+        up=0;
+    } else if (e.keyCode == 76){
+        right=0;
+    } else if(e.keyCode == 74){
+        down=0;
+    }
+
+    if (!left && !right && !up && !down && keys.has(e.keyCode)) {
+        if (!visited.has(4*x + y)){
+            document.getElementById("cell-" + (4*X + Y).toString()).style.border = "1px solid black"
+            X=x,Y=y;
+            document.getElementById("cell-" + (4*X + Y).toString()).style.border = "2px solid blue"
+            addLetter();
+        } else {
+            document.getElementById("cell-" + (4*x + y).toString()).style.border = "1px solid black"
+            x=X,y=Y;
+            document.getElementById("cell-" + (4*X + Y).toString()).style.border = "2px solid blue"
         }
-        console.log(word)
+        keys.clear();
+        console.log(word);
     }
 });
 
