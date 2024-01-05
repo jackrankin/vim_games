@@ -9,21 +9,22 @@
 
 
     <body>
-
         <script src="./controller.js" ></script>
-        <nav>
-            <a href="./boggle.html">VIM Boggle</a>
-        </nav>
+        <div class = "vertical_center">
+            <div class = "home_container">
+                <div class="card" id="joinCard">
+                    <h2>Join Room</h2>
+                    <input type="text" placeholder="Username" id="nameField" />
+                    <input type="text" placeholder="Game ID" id="gameField" />
+                    <button onclick="enterGame()">Enter Room</button>
+                </div>
 
-        <input type="text" placeholder="game id" id="gameField"/>
-        <input type="text" placeholder="username" id="nameField"/>
-
-        <div>
-            <button onclick="enterGame()"> ENTER ROOM </button>
-        </div>
-
-        <div>
-            <button onclick="makeGame()"> GENERATE ROOM </button>
+                <div class="card" id="generateCard">
+                    <h2>Generate Room</h2>
+                    <input type="text" placeholder="Username" id="_nameField" />
+                    <button onclick="makeGame()">Generate Room</button>
+                </div>
+            </div>
         </div>
     </body>
 

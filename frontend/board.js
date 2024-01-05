@@ -17,12 +17,37 @@ let up=0;
 let keyCounter=0;
 let score=0;
 let gameOver=0;
-
+let endTime = new Date();
+endTime.setSeconds(endTime.getSeconds() + 31);
 
 var urlParams = new URLSearchParams(window.location.search);
 var name = urlParams.get('name');
 var gameString = urlParams.get('gameString');
 var gameId = urlParams.get('gameId');
+
+async function setLetters(){
+    document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
+
+    for (let i = 0; i < 16; i++) {
+        let g = gameString[i];
+        if (i%4 == 0) arr.push(new Array());
+        arr.slice(-1)[0].push(g);
+        document.getElementById("hitbox-"+i.toString()).innerText = g;
+    }
+}
+
+function checkTime() {
+    let currentTime = new Date();
+
+    let remainingTime = Math.floor((endTime - currentTime) / 1000);
+    document.getElementById("your_time").innerText = "TIME: " + remainingTime;
+
+    if (remainingTime <= 0) {
+        endGame();
+    } else {
+        requestAnimationFrame(checkTime);
+    }
+}
 
 async function checkFinish() {
     const result = await fetch("http://localhost:8000/checkFinish/" + name + '/' + gameId)
@@ -39,40 +64,15 @@ async function checkFinish() {
     if (result) {
         gameOver = 1;
         updateScoreBoard(result)
+    } else {
+        setLetters();
+        checkTime();
     }
 
     console.log(result)
 }
 
 checkFinish();
-setLetters()
-
-async function setLetters(){
-    document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
-
-    for (let i = 0; i < 16; i++) {
-        let g = gameString[i];
-        if (i%4 == 0) arr.push(new Array());
-        arr.slice(-1)[0].push(g);
-        document.getElementById("hitbox-"+i.toString()).innerText = g;
-    }
-}
-
-let endTime = new Date();
-endTime.setSeconds(endTime.getSeconds() + 20);
-
-function checkTime() {
-    let currentTime = new Date();
-
-    let remainingTime = Math.floor((endTime - currentTime) / 1000);
-    document.getElementById("your_time").innerText = "TIME: " + remainingTime;
-
-    if (remainingTime <= 0) {
-        endGame();
-    } else {
-        requestAnimationFrame(checkTime);
-    }
-}
 
 async function endGame() {
     const result = await fetch("http://localhost:8000/finish/" + name + '/' + gameId + '/' + score)
@@ -88,6 +88,10 @@ async function endGame() {
 
     gameOver = 1;
     updateScoreBoard(result)
+    for (let i = 0; i < 16; i++) {
+        document.getElementById("cell-" + (i).toString()).style.backgroundColor = "white";
+        document.getElementById("cell-" + (i).toString()).style.border = "1px solid black";
+    }
 }
 
 function updateScoreBoard(result){
@@ -104,7 +108,6 @@ function updateScoreBoard(result){
 
 }
 
-checkTime();
 
 async function checkWord(){
     if (word.length == 0) {
