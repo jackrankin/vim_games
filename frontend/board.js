@@ -25,6 +25,8 @@ var name = urlParams.get('name');
 var gameString = urlParams.get('gameString');
 var gameId = urlParams.get('gameId');
 
+document.getElementById("room_code").innerText = "ROOM ID: " + gameId.toString(); 
+
 async function setLetters(){
     document.getElementById("cell-" + ((4 * y) + x).toString()).style.border = "2px solid blue";
 
@@ -105,7 +107,6 @@ function updateScoreBoard(result){
 
     for (let i = 0; i < 16; i++)
         document.getElementById("cell-" + (i).toString()).style.backgroundColor = "white";
-
 }
 
 
