@@ -20,7 +20,8 @@ async function enterGame() {
 }
 
 async function makeGame() {
-    name = document.getElementById("nameField").value
+    name = document.getElementById("_nameField").value
+    console.log(name)
 
     const result = await fetch("http://localhost:8000/makeRoom")
         .then(response => {
@@ -46,7 +47,7 @@ async function makeGame() {
         .catch(error => {
             console.error('Fetch error:', error);
         });
-    updatePage();
+    //updatePage();
 }
 
 function updatePage() {
