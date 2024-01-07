@@ -47,7 +47,7 @@ async function makeGame() {
         .catch(error => {
             console.error('Fetch error:', error);
         });
-    //updatePage();
+    updatePage();
 }
 
 function updatePage() {
